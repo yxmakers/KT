@@ -1,0 +1,7 @@
+{
+  "name": "kt",
+  "short_name": "kt",
+  "description": "kt v0.0.1",
+  "start_url": "/",
+  "display": "standalone"
+}

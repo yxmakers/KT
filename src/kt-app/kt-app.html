@@ -1,0 +1,32 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="kt-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <h2>Hello [[prop1]]!</h2>
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class KtApp extends Polymer.Element {
+      static get is() { return 'kt-app'; }
+      static get properties() {
+        return {
+          prop1: {
+            type: String,
+            value: 'kt-app'
+          }
+        };
+      }
+    }
+
+    window.customElements.define(KtApp.is, KtApp);
+  </script>
+</dom-module>
