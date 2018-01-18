@@ -14,19 +14,41 @@
 
     <link rel="import" href="/src/kt-app/kt-app.html">
     <link rel="import" href="/src/kt-app/kt-point.html">
-    <link rel="import" href="/bower_components/paper-card/paper-card.html">
-    <link rel="import" href="/bower_components/paper-button/paper-button.html">
-<!--
-    <link rel="import" href="/bower_components/paper-elements/paper-elements.html">
-    <link rel="import" href="/bower_components/iron-image/iron-image.html">
-    <link rel="import" href="/bower_components/paper-button/paper-button.html">
-    <link rel="import" href="/bower_components/iron-flex-layout/iron-flex-layout.html">
+
+    <link rel="import" href="/bower_components/app-layout/app-layout.html">
     <link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
-    <link rel="import" href="/bower_components/paper-styles/color.html">
-    <link rel="import" href="/bower_components/paper-styles/typography.html">
--->
+    <link rel="import" href="/bower_components/font-roboto/roboto.html">
+    <link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+    <custom-style>
+      <style is="custom-style">
+        body {
+          font-family: Roboto, Noto, sans-serif;
+        }
+
+        app-toolbar {
+          background-color: #4285f4;
+          color: #fff;
+          margin: 20px 0;
+        }
+
+        paper-icon-button {
+          --paper-icon-button-ink-color: white;
+        }
+
+        paper-icon-button+[main-title] {
+          margin-left: 24px;
+        }
+      </style>
+    </custom-style>
   </head>
   <body>
+      <app-toolbar>
+          <paper-icon-button icon="menu"></paper-icon-button>
+          <paper-icon-button icon="add"></paper-icon-button>
+          <div main-title>App name</div>
+          <paper-icon-button icon="search"></paper-icon-button>
+
+      </app-toolbar>
     <kt-app></kt-app>
     <kt-point></kt-point>
   </body>
