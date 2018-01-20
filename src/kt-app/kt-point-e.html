@@ -1,0 +1,75 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/polymer/lib/mixins/gesture-event-listeners.html">
+
+<dom-module id="kt-point-e" on-track="handleTrack">
+    <template>
+        <style>
+            :host {
+                display: block;
+                position: relative;
+                left: 0px;
+                top: 0px;
+            }
+            .input {
+                background: #000;
+            }
+        </style>
+        <paper-card id="point-e-id" heading="Emmental" image="http://placehold.it/350x150/07C1FF/000000" alt="Emmental">
+            <paper-input label="Input Title"></paper-input>
+            <paper-input label="Input Content"></paper-input>
+            <paper-button>Save</paper-button>
+        </paper-card>
+    </template>
+    <script>
+        class KtPointEdit extends Polymer.GestureEventListeners(Polymer.Element) {
+            static get is() { return 'kt-point-e'; }
+            static get properties() {
+                return {
+                    x: {
+                        type: Number,
+                        value: 100,
+                    },
+                    y: {
+                        type: Number,
+                        value: 100,
+                    }
+                };
+            }
+            static get observers() {
+                return [
+                    'posChanged(x, y)'
+                ]
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+                Polymer.Gestures.addListener(this, 'track', e => this.handleTrack(e));
+                this.style.webkitTransform = 'translate(' + this.x + 'px, ' + this.y + 'px)';
+            }
+
+            posChanged(posX, posY) {
+                this.x = posX;
+                this.y = posY;
+                this.style.webkitTransform = 'translate(' + this.x + 'px, ' + this.y + 'px)';
+            }
+
+            handleTrack(e) {
+                switch (e.detail.state) {
+                    case 'start':
+                        break;
+                    case 'track':
+                        this.x += e.detail.ddx;
+                        this.y += e.detail.ddy;
+                        break;
+                    case 'end':
+                        break;
+                }
+            }
+        }
+
+        window.customElements.define(KtPointEdit.is, KtPointEdit);
+    </script>
+</dom-module>
