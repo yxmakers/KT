@@ -1,9 +1,10 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="/bower_components/paper-card/paper-card.html">
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
 <link rel="import" href="/bower_components/polymer/lib/mixins/gesture-event-listeners.html">
 
-<dom-module id="kt-point" on-track="handleTrack">
+<dom-module id="kt-point-e" on-track="handleTrack">
     <template>
         <style>
             :host {
@@ -12,25 +13,21 @@
                 left: 0px;
                 top: 0px;
             }
+            .input {
+                background: #000;
+            }
         </style>
-        <paper-card id="point-id" heading="Emmental" image="http://placehold.it/350x150/FFC107/000000" alt="Emmental">
-            <h2>[[p_title]]</h2>
-            <h3>[[p_desc]]</h3>
+        <paper-card id="point-e-id" heading="Emmental" image="http://placehold.it/350x150/07C1FF/000000" alt="Emmental">
+            <paper-input label="Input Title"></paper-input>
+            <paper-input label="Input Content"></paper-input>
+            <paper-button>Save</paper-button>
         </paper-card>
     </template>
     <script>
-        class KtPoint extends Polymer.GestureEventListeners(Polymer.Element) {
-            static get is() { return 'kt-point'; }
+        class KtPointEdit extends Polymer.GestureEventListeners(Polymer.Element) {
+            static get is() { return 'kt-point-e'; }
             static get properties() {
                 return {
-                    p_title: {
-                        type: String,
-                        value: 'test knowledge point'
-                    },
-                    p_desc: {
-                        type: String,
-                        value: 'knowledge description'
-                    },
                     x: {
                         type: Number,
                         value: 100,
@@ -46,8 +43,9 @@
                     'posChanged(x, y)'
                 ]
             }
-            constructor() {
-                super();
+
+            connectedCallback() {
+                super.connectedCallback();
                 Polymer.Gestures.addListener(this, 'track', e => this.handleTrack(e));
                 this.style.webkitTransform = 'translate(' + this.x + 'px, ' + this.y + 'px)';
             }
@@ -61,22 +59,17 @@
             handleTrack(e) {
                 switch (e.detail.state) {
                     case 'start':
-                        this.p_desc = 'Tracking started!';
                         break;
                     case 'track':
-                        this.p_desc = 'Tracking in progress... ' +
-                            e.detail.dx + ', ' + e.detail.dy;
-
                         this.x += e.detail.ddx;
                         this.y += e.detail.ddy;
                         break;
                     case 'end':
-                        this.p_desc = 'Tracking ended!';
                         break;
                 }
             }
         }
 
-        window.customElements.define(KtPoint.is, KtPoint);
+        window.customElements.define(KtPointEdit.is, KtPointEdit);
     </script>
 </dom-module>

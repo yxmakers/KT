@@ -1,0 +1,11 @@
+{
+  "name": "KT",
+  "description": "KT server App",
+  "version": "0.0.1",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "4.x",
+    "mongoose": "^5.0.2"
+  },
+  "devDependencies": {}
+}
