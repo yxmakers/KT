@@ -5,14 +5,14 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
 
-var mongoose = require('mongoose');
-var db = mongoose.connection;
-mongoose.connect('mongodb://admin:admin@localhost/kt');
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
-    // we're connected!
-    console.log.bind(console, 'we\'re connected!');
-  });
+// var mongoose = require('mongoose');
+// var db = mongoose.connection;
+// mongoose.connect('mongodb://admin:admin@localhost/kt');
+// db.on('error', console.error.bind(console, 'connection error:'));
+// db.once('open', function() {
+//     // we're connected!
+//     console.log.bind(console, 'we\'re connected!');
+//   });
 
 
 
