@@ -4,17 +4,34 @@
 <link rel="import" href="/bower_components/paper-input/paper-input.html">
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
 <link rel="import" href="/bower_components/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="/bower_components/brum-global-variable/brum-global-variable.html">
 
 <dom-module id="kt-login">
     <template>
         <style>
+            :host {
+                display: block;
+
+                padding: 10px;
+            }
+
+            .card {
+                margin: 24px;
+                padding: 16px;
+                color: #757575;
+                border-radius: 5px;
+                background-color: #fff;
+                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+            }
+
             .wrapper-btns {
                 margin-top: 15px;
             }
-        
+
             paper-button.link {
                 color: #757575;
             }
+
             .alert-error {
                 background: #ffcdd2;
                 border: 1px solid #f44336;
@@ -25,10 +42,12 @@
             }
         </style>
         <div class="card">
-            <div id="unauthenticated" hidden$="[[storedUser.loggedin]]" >
+            <div id="unauthenticated" hidden$="[[storedUser.loggedin]]">
                 <h1>Log In</h1>
 
-                <p> <strong>Log in</strong> or <strong>sign up</strong> to access secret Chuck Norris quotes!</p>
+                <p>
+                    <strong>Log in</strong> or
+                    <strong>sign up</strong> to access secret Chuck Norris quotes!</p>
 
                 <template is="dom-if" if="[[error]]">
                     <p class="alert-error">
@@ -50,27 +69,23 @@
                 </paper-input-container>
 
                 <div class="wrapper-btns">
-                    <paper-button raised class="primary" on-tap="postLogin">Log In</paper-button>
+                    <paper-button raised="" class="primary" on-tap="postLogin">Log In</paper-button>
                     <paper-button class="link" on-tap="postRegister">Sign Up</paper-button>
                 </div>
 
             </div>
 
             <div id="authenticated" hidden$="[[!storedUser.loggedin]]">
-                    <h2>Hello, [[storedUser.name]]!</h2>
-                    <p>You are currently logged in. You can access
-                        <a href="[[rootPath]]secret-quotes">Secret Quotes</a>!</p>
+                <h2>Hello, [[storedUser.name]]!</h2>
+                <p>You are currently logged in. You can access
+                    <a href="[[rootPath]]secret-quotes">Secret Quotes</a>!</p>
             </div>
 
         </div>
-        <iron-ajax id="registerLoginAjax" 
-            method="post" 
-            content-type="application/json" 
-            handle-as="text" 
-            on-response="handleUserResponse"
-            on-error="handleUserError">
+        <iron-ajax id="registerLoginAjax" method="post" content-type="application/json" handle-as="text" on-response="handleUserResponse" on-error="handleUserError">
         </iron-ajax>
         <iron-localstorage name="user-storage" value="{{storedUser}}"></iron-localstorage>
+        <brum-global-variable key="userData" value="{{storedUser}}"></brum-global-variable>
     </template>
 
 

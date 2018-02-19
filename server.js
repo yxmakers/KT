@@ -19,7 +19,7 @@ app.use(bodyParser.json());
 app.post('/sessions/create', function (req, res) {
     console.log.bind(console, 'sessions create: '+ req.body.username);
     res.status(201).send({
-        id_token:'id_tokennnnnnnnnnnnnnnn',
+        id_token:'id_'+req.body.username,
         access_token:'access_tokennnnnnnnnnn'
     });
 });

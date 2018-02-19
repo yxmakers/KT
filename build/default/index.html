@@ -1,30 +1,40 @@
 <!DOCTYPE html><html lang="en"><head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>kt</title>
-    <meta name="description" content="kt v0.0.1">
+  <title>kt</title>
+  <meta name="description" content="kt v0.0.1">
 
-    <!-- See https://goo.gl/OOhYW5 -->
-    <link rel="manifest" href="/manifest.json">
+  <!-- See https://goo.gl/OOhYW5 -->
+  <link rel="manifest" href="/manifest.json">
 
-    <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
 
-    <link rel="import" href="/src/kt-app/kt-app.html">
-    <link rel="import" href="/src/kt-app/kt-point.html">
-    <link rel="import" href="/src/kt-app/kt-toolbar.html">
-    <link rel="import" href="/src/kt-app/kt-point-e.html">
-    <link rel="import" href="/src/kt-app/login.html">
+  <!--for [polymer-root-path] -->
+  <base href="/">
+  <script>
+    window.Polymer = { rootPath: '/' };
+    // Load and register pre-caching Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('service-worker.js', {
+          scope: Polymer.rootPath,
+        });
+      });
+    }
 
-  </head>
-  <body>
-    <kt-toolbar></kt-toolbar>
-    <kt-app></kt-app>
-    <div id="point-list">
-        <!--<kt-point></kt-point>-->
-    </div>
+  </script>
+  <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
 
-    <kt-login></kt-login>
-  
+  <!-- import after rootPath setted.-->
+  <link rel="import" href="/src/kt-app/kt-app.html">
+  <link rel="import" href="/src/kt-app/kt-point.html">
+  <link rel="import" href="/src/kt-app/kt-point-e.html">
 
-</body></html>
+</head>
+
+<body>
+  <kt-app></kt-app>
+  <div id="point-list">
+
+
+</div></body></html>

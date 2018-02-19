@@ -1,4 +1,25 @@
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/app-route/app-location.html">
+<link rel="import" href="/bower_components/app-route/app-route.html">
+<link rel="import" href="/bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="/bower_components/brum-global-variable/brum-global-variable.html">
+<link rel="import" href="/bower_components/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="/bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="/bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="/bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="/bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="/bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="/bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="/bower_components/app-layout/app-layout.html">
+<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/bower_components/font-roboto/roboto.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+
+<!-- <link rel="import" href="/src/kt-app/kt-toolbar.html"> -->
+<link rel="lazy-import" href="/src/kt-app/kt-login.html">
+<link rel="lazy-import" href="/src/kt-app/not-found.html">
+<link rel="import" href="/src/kt-app/kt-logout.html">
 
 <dom-module id="kt-app">
   <template>
@@ -7,7 +28,79 @@
         display: block;
       }
     </style>
-    <h2>Hello [[prop1]]!</h2>
+    <custom-style>
+      <style is="custom-style">
+        body {
+          font-family: Roboto, Noto, sans-serif;
+        }
+
+        app-toolbar {
+          background-color: #4285f4;
+          color: #fff;
+          margin: 20px 0;
+        }
+
+        paper-icon-button {
+          --paper-icon-button-ink-color: white;
+        }
+
+        paper-icon-button+[main-title] {
+          margin-left: 24px;
+        }
+      </style>
+    </custom-style>
+
+    <app-location route="{{route}}" url-space-regex="^[[rootPath]]">
+    </app-location>
+
+    <app-route route="{{route}}" pattern="[[rootPath]]:page" data="{{routeData}}" tail="{{subroute}}">
+    </app-route>
+
+    <iron-localstorage name="user-storage" value="{{storedUser}}"></iron-localstorage>
+    <brum-global-variable key="userData" value="{{storedUser}}"></brum-global-variable>
+    <app-drawer-layout fullbleed="" narrow="{{narrow}}">
+      <!-- Drawer content -->
+      <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
+        <app-toolbar>Menu</app-toolbar>
+        <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+          <div name="kt-home">
+            <a href="[[rootPath]]kt-home">Home</a>
+          </div>
+          <div name="kt-tree" hidden$="[[!storedUser.loggedin]]">
+            <a href="[[rootPath]]kt-tree">My Knowledge Tree</a>
+          </div>
+        </iron-selector>
+      </app-drawer>
+      <!-- Main content -->
+      <app-header-layout has-scrolling-region="">
+        <app-header slot="header" condenses="" reveals="" effects="waterfall">
+          <!-- <kt-toolbar></kt-toolbar> -->
+          <app-toolbar>
+            <paper-icon-button icon="menu" drawer-toggle=""></paper-icon-button>
+            <paper-icon-button icon="add" on-click="_addKTPoint" )=""></paper-icon-button>
+            <paper-icon-button icon="search"></paper-icon-button>
+            <div main-title="">Knowledge Tree</div>
+            <a name="kt-login" href="[[rootPath]]kt-login" hidden$="[[storedUser.loggedin]]">Log in</a>
+            <!-- -->
+            <div hidden$="[[!storedUser.loggedin]]">
+              <span class="greeting">Hi [[storedUser.name]]!</span>
+              <kt-logout stored-user="{{storedUser}}" link=""></kt-logout>
+            </div>
+          </app-toolbar>
+
+        </app-header>
+        <iron-pages selected="[[page]]" attr-for-selected="name" fallback-selection="not-found" role="main">
+          <!--
+            <kt-home name="kt-home"></kt-home>
+            <kt-tree></kt-tree>
+            <kt-default-tree></kt-default-tree>
+            -->
+          <kt-login name="kt-login"></kt-login>
+          <not-found name="not-found"></not-found>
+        </iron-pages>
+
+      </app-header-layout>
+    </app-drawer-layout>
   </template>
 
   <script>
@@ -19,11 +112,48 @@
       static get is() { return 'kt-app'; }
       static get properties() {
         return {
-          prop1: {
+          page: {
             type: String,
-            value: 'kt-app'
-          }
+            reflectToAttribute: true,
+            observer: '_pageChanged',
+          },
+          routeData: Object,
+          subroute: String,
+          rootPath: String,
+          storedUser: Object
         };
+      }
+      static get observers() {
+        return [
+          '_routePageChanged(routeData.page)',
+        ];
+      }
+      _routePageChanged(page) {
+        this.page = page || 'kt-home';
+
+        // Close a non-persistent drawer when the page & route are changed.
+        if (!this.$.drawer.persistent) {
+          this.$.drawer.close();
+        }
+      }
+      _pageChanged(page) {
+        // Load page import on demand. Show 404 page if fails
+        var resolvedPageUrl = this.resolveUrl(page + '.html');
+        Polymer.importHref(
+          resolvedPageUrl,
+          null,
+          this._showPage404.bind(this),
+          true);
+      }
+      _showPage404() {
+        this.page = 'not-found';
+      }
+
+      _addKTPoint() {
+        console.log('add button clicked.');
+        let newPoint = document.createElement('kt-point-e');
+        let pointCav = document.querySelector('#point-list');
+        Polymer.dom(pointCav).appendChild(newPoint);
       }
     }
     window.customElements.define(KtApp.is, KtApp);

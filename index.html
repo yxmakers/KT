@@ -1,31 +1,49 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>kt</title>
-    <meta name="description" content="kt v0.0.1">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <!-- See https://goo.gl/OOhYW5 -->
-    <link rel="manifest" href="/manifest.json">
+  <title>kt</title>
+  <meta name="description" content="kt v0.0.1">
 
-    <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+  <!-- See https://goo.gl/OOhYW5 -->
+  <link rel="manifest" href="/manifest.json">
 
-    <link rel="import" href="/src/kt-app/kt-app.html">
-    <link rel="import" href="/src/kt-app/kt-point.html">
-    <link rel="import" href="/src/kt-app/kt-toolbar.html">
-    <link rel="import" href="/src/kt-app/kt-point-e.html">
-    <link rel="import" href="/src/kt-app/login.html">
+  <!-- Add to homescreen for Chrome on Android. Fallback for manifest.json -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="My App">
 
-  </head>
-  <body>
-    <kt-toolbar></kt-toolbar>
-    <kt-app></kt-app>
-    <div id="point-list">
-        <!--<kt-point></kt-point>-->
-    </div>
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="My App">
 
-    <kt-login></kt-login>
-  </body>
+  <!--for [polymer-root-path] -->
+  <base href="/">
+  <script>
+    window.Polymer = { rootPath: '/' };
+    // Load and register pre-caching Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('service-worker.js', {
+          scope: Polymer.rootPath,
+        });
+      });
+    }
+
+  </script>
+  <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+  <!-- import after rootPath setted.-->
+  <link rel="import" href="/src/kt-app/kt-app.html">
+  <link rel="import" href="/src/kt-app/kt-point.html">
+  <link rel="import" href="/src/kt-app/kt-point-e.html">
+</head>
+
+<body>
+  <kt-app></kt-app>
+  <div id="point-list" />
+</body>
+
 </html>
