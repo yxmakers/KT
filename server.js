@@ -1,22 +1,20 @@
 var express = require('express');
 var app = express();
-
 var bodyParser = require('body-parser');
-app.use(bodyParser.json());
-
-
+var fs = require('fs');
 var mongoose = require('mongoose');
 var db = mongoose.connection;
-mongoose.connect('mongodb://admin:admin@localhost/kt');
+
+var User = require('./server/models/user.js')
+
+mongoose.connect('mongodb://admin:admin%40c03@localhost/kt');
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
     // we're connected!
     console.log( 'we\'re connected!');
   });
 
-var User = require('./server/models/user.js')
-
-
+app.use(bodyParser.json());
 app.post('/sessions/create', function (req, res) {
     console.log('sessions create: '+ req.body.username);
     const userName = req.body.username;
@@ -56,5 +54,12 @@ app.get('/login', function (req, res) {
     res.send('Hello world!');
 });
 
+//dynamically include routes (controller)
+fs.readdirSync('./server/controllers').forEach(function(file) {
+    if(file.substr(-3) === '.js') {
+        route = require('./server/controllers/' + file);
+        route.controller(app);
+    }
+});
 
 app.listen(3000);

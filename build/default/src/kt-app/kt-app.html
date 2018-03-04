@@ -20,6 +20,7 @@
 <link rel="lazy-import" href="/src/kt-app/kt-login.html">
 <link rel="lazy-import" href="/src/kt-app/not-found.html">
 <link rel="import" href="/src/kt-app/kt-logout.html">
+<link rel="lazy-import" href="/src/kt-app/kt-tree.html">
 
 <dom-module id="kt-app">
   <template>
@@ -92,9 +93,10 @@
         <iron-pages selected="[[page]]" attr-for-selected="name" fallback-selection="not-found" role="main">
           <!--
             <kt-home name="kt-home"></kt-home>
-            <kt-tree></kt-tree>
             <kt-default-tree></kt-default-tree>
             -->
+
+          <kt-tree name="kt-tree"></kt-tree>
           <kt-login name="kt-login"></kt-login>
           <not-found name="not-found"></not-found>
         </iron-pages>

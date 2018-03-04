@@ -1,1 +1,166 @@
-kt-tree 
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="/src/kt-app/kt-point.html">
+
+<dom-module id="kt-tree" on-track="handleTrack">
+    <template>
+        <style>
+            :host {
+                display: block;
+                position: relative;
+                left: 0px;
+                top: 0px;
+            }
+        </style>
+        <div id="point-list">
+            My knownledge tree!
+        </div>
+        <iron-ajax id="pointGetAjax" method="post" content-type="application/json" handle-as="text" on-response="handleResponse" on-error="handleError">
+    </iron-ajax></template>
+    <script>
+        class KtTree extends Polymer.GestureEventListeners(Polymer.Element) {
+            static get is() { return 'kt-tree'; }
+            static get properties() {
+                return {
+                    x: {
+                        type: Number,
+                        value: 100,
+                    },
+                    y: {
+                        type: Number,
+                        value: 100,
+                    },
+                    // z: {
+                    //     type: Number,
+                    //     value: 100,
+                    // },                    
+                    // xScale: {
+                    //     type: Number,
+                    //     value: 1,
+                    // },
+                    // yScale: {
+                    //     type: Number,
+                    //     value: 1,
+                    // },
+                    // zScale: {
+                    //     type: Number,
+                    //     value: 1,
+                    // },
+                    xAxis:{
+                        type : Object,
+                        value: {
+                            // name:   {type:String, value : 'AxisName'},
+                            // direct: {type:Number, value : 0}, //enum -1 0 1
+                            // curPoint :{type: Number,value: 0 }
+                        }
+                    },
+                    yAxis:{
+                        type : Object,
+                        value: {
+                            // name:   {type:String, value : 'AxisName'},
+                            // direct: {type:Number, value : 0}, //enum -1 0 1
+                            // curPoint :{type: Number,value: 0 }
+                        }
+                    },
+                    zAxis:{
+                        type : Object,
+                        value: {
+                            // name:   {type:String, value : 'AxisName'},
+                            // direct: {type:Number, value : 0}, //enum -1 0 1
+                            // curPoint :{type: Number,value: 0 }
+                        }
+                    },
+                    pointSet:{
+                        type: Set
+                    },
+                    lastX: {
+                        type: Number,
+                        value: 100,                        
+                    },
+                    lastY: {
+                        type: Number,
+                        value: 100,
+                    }
+                };
+            }
+
+            static get observers() {
+                return [
+                    'posChanged(x, y)'
+                ]
+            }
+            constructor() {
+                super();
+                this.pointSet = new Set();
+                Polymer.Gestures.addListener(this, 'track', e => this.handleTrack(e));
+                this.style.webkitTransform = 'translate(' + this.x + 'px, ' + this.y + 'px)';
+            }
+
+            posChanged(posX, posY) {
+                this.x = posX;
+                this.y = posY;
+                this.style.webkitTransform = 'translate(' + this.x + 'px, ' + this.y + 'px)';
+                //request new point
+
+            }
+
+            handleTrack(e) {
+                switch (e.detail.state) {
+                    case 'start':
+                        break;
+                    case 'track':
+                        this.x += e.detail.ddx;
+                        this.y += e.detail.ddy;
+                        break;
+                    case 'end':
+                        //test code
+                        this.requestPoint( this.x, this.y);
+                        break;
+                }
+            }
+
+            requestPoint( x, y) {
+                this.$.pointGetAjax.url = 'http://localhost:3000/p/r';
+                this.$.pointGetAjax.body = {};
+                this.$.pointGetAjax.body.x = x;
+                this.$.pointGetAjax.body.y = y;
+                //TODO add request conditions / relations / tags / users
+                this.$.pointGetAjax.generateRequest();
+            }
+
+            handleResponse(event) {
+                var response = JSON.parse(event.detail.response);
+                if (response.err) {
+                    console.log(response.err);
+                    return;
+                }
+                for(let _key in response)
+                {
+                    let newInfo = response[_key];
+                    if(!this.pointSet.has(newInfo._id))
+                    {
+                        this._addKTPoint(newInfo);
+                        this.pointSet.add(newInfo._id);
+                    }
+                }
+            }
+
+            handleUserError(event) {
+                this.error = event.detail.request.xhr.response;
+            }
+
+            _addKTPoint(pointInfo) {
+                let newPoint = document.createElement('kt-point');
+                let pointCav = document.querySelector('#point-list');
+                newPoint.p_id = pointInfo._id;
+                newPoint.p_title = pointInfo.title || 'no title';
+                newPoint.p_desc = pointInfo.des || 'no description';
+                newPoint.x = pointInfo.x || 100;
+                newPoint.y = pointInfo.y || 100;
+                
+                Polymer.dom(pointCav).appendChild(newPoint);
+            }
+        }
+        window.customElements.define(KtTree.is, KtTree);
+    </script>
+</dom-module>

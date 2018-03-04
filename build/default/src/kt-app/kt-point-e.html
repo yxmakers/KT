@@ -1,8 +1,10 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="/bower_components/paper-card/paper-card.html">
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/iron-input/iron-input.html">
 <link rel="import" href="/bower_components/paper-input/paper-input.html">
 <link rel="import" href="/bower_components/polymer/lib/mixins/gesture-event-listeners.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
 
 <dom-module id="kt-point-e" on-track="handleTrack">
     <template>
@@ -18,11 +20,18 @@
             }
         </style>
         <paper-card id="point-e-id" heading="Emmental" image="http://placehold.it/350x150/07C1FF/000000" alt="Emmental">
-            <paper-input label="Input Title"></paper-input>
-            <paper-input label="Input Content"></paper-input>
-            <paper-button>Save</paper-button>
+            <iron-input bind-value="{{formData.title}}">
+                <input id="title" type="text" value="{{formData.title}}" placeholder="title">
+            </iron-input>
+            <iron-input bind-value="{{formData.des}}">
+                <input id="des" type="text" value="{{formData.des}}" placeholder="description">
+            </iron-input>
+            <paper-button raised="" class="primary" on-tap="postPointCreate">Save</paper-button>
+            <paper-button class="link" on-tap="postPointUpdate">Update</paper-button>
         </paper-card>
-    </template>
+
+        <iron-ajax id="pointUpdateAjax" method="post" content-type="application/json" handle-as="text" on-response="handleResponse" on-error="handleError">
+    </iron-ajax></template>
     <script>
         class KtPointEdit extends Polymer.GestureEventListeners(Polymer.Element) {
             static get is() { return 'kt-point-e'; }
@@ -35,6 +44,10 @@
                     y: {
                         type: Number,
                         value: 100,
+                    },
+                    formData: {
+                        type: Object,
+                        value: {}
                     }
                 };
             }
@@ -67,6 +80,44 @@
                     case 'end':
                         break;
                 }
+            }
+
+            _setReqBody() {
+                this.$.pointUpdateAjax.body = this.formData;
+                this.$.pointUpdateAjax.body.x = this.x;
+                this.$.pointUpdateAjax.body.y = this.y;
+            }
+
+            postPointCreate() {
+                this.$.pointUpdateAjax.url = 'http://localhost:3000/p/c';
+                this._setReqBody();
+                this.$.pointUpdateAjax.generateRequest();
+            }
+
+            postPointUpdate() {
+                this.$.pointUpdateAjax.url = 'http://localhost:3000/p/u';
+                this._setReqBody();
+                this.$.pointUpdateAjax.generateRequest();
+            }
+
+            // postPointDelete() {
+            //     this.$.pointUpdateAjax.url = 'http://localhost:3000/p/d';
+            //     this._setReqBody();
+            //     this.$.pointUpdateAjax.generateRequest();
+            // }
+
+            handleResponse(event) {
+                var response = JSON.parse(event.detail.response);
+                if (response.result) {
+                    console.log(response.result);
+                }
+
+                // reset form data
+                this.formData = {};
+            }
+
+            handleUserError(event) {
+                this.error = event.detail.request.xhr.response;
             }
         }
 

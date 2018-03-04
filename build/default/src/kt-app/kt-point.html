@@ -1,28 +1,36 @@
-<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
 <link rel="import" href="/bower_components/paper-card/paper-card.html">
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
 <link rel="import" href="/bower_components/polymer/lib/mixins/gesture-event-listeners.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
 
 <dom-module id="kt-point" on-track="handleTrack">
     <template>
         <style>
             :host {
                 display: block;
-                position: relative;
+                position: absolute;
                 left: 0px;
                 top: 0px;
             }
         </style>
-        <paper-card id="point-id" heading="Emmental" image="http://placehold.it/350x150/FFC107/000000" alt="Emmental">
+        <paper-card id="point-id" alt="keep it simple.">
             <h2>[[p_title]]</h2>
             <h3>[[p_desc]]</h3>
         </paper-card>
-    </template>
+        <iron-ajax id="pointUpdateAjax" method="post" content-type="application/json" handle-as="text" on-response="handleResponse" on-error="handleError">
+    </iron-ajax></template>
     <script>
         class KtPoint extends Polymer.GestureEventListeners(Polymer.Element) {
             static get is() { return 'kt-point'; }
             static get properties() {
                 return {
+                    p_id: {
+                        type: String,
+                        value: ''
+                    },
                     p_title: {
                         type: String,
                         value: 'test knowledge point'
@@ -46,8 +54,9 @@
                     'posChanged(x, y)'
                 ]
             }
-            constructor() {
-                super();
+
+            connectedCallback() {
+                super.connectedCallback();
                 Polymer.Gestures.addListener(this, 'track', e => this.handleTrack(e));
                 this.style.webkitTransform = 'translate(' + this.x + 'px, ' + this.y + 'px)';
             }
@@ -61,19 +70,39 @@
             handleTrack(e) {
                 switch (e.detail.state) {
                     case 'start':
-                        this.p_desc = 'Tracking started!';
                         break;
                     case 'track':
-                        this.p_desc = 'Tracking in progress... ' +
-                            e.detail.dx + ', ' + e.detail.dy;
-
                         this.x += e.detail.ddx;
                         this.y += e.detail.ddy;
                         break;
                     case 'end':
-                        this.p_desc = 'Tracking ended!';
+                        this.postPointUpdate();
                         break;
                 }
+            }
+
+            _setReqBody() {
+                this.$.pointUpdateAjax.body = {};
+                this.$.pointUpdateAjax.body.id = this.p_id;
+                this.$.pointUpdateAjax.body.x = this.x;
+                this.$.pointUpdateAjax.body.y = this.y;
+            }
+
+            postPointUpdate() {
+                this.$.pointUpdateAjax.url = 'http://localhost:3000/p/u';
+                this._setReqBody();
+                this.$.pointUpdateAjax.generateRequest();
+            }
+
+            handleResponse(event) {
+                var response = JSON.parse(event.detail.response);
+                if (response.result) {
+                    console.log(response.result);
+                }
+            }
+
+            handleUserError(event) {
+                this.error = event.detail.request.xhr.response;
             }
         }
 
